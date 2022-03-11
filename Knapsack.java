@@ -62,12 +62,18 @@ class Knapsack{
      * Display current state of knapsack object
      */
     public void displaySolution(){
-        System.out.println("The items chosen are: ");
+        System.out.println("The chosen items are: ");
+        System.out.print("Weights: ");
         for(int i = 0; i < n; i++){
-            // if(x_best[i]){
-
-            // }
+            if(x_best[i]) System.out.print(w[i] + " ");
         }
+        System.out.println();
+        System.out.print("Values: ");
+        for(int i = 0; i < n; i++){
+            if(x_best[i]) System.out.print(v[i] + " ");
+        }
+        System.out.println();
+        System.out.println("Number of recursive calls: " + step_counter);
     }
     /**
      * Test method for the unimproved enumeration method
@@ -78,12 +84,7 @@ class Knapsack{
     public static void TestEnumSimple(int capacity, int[] values, int[] weights){
         Knapsack p = new Knapsack(capacity, values, weights);
         p.Enum(-1, 0, 0, p.x);
-        System.out.print("The items chosen are: ");
-        for (boolean i : p.x_best) {
-            System.out.print(i + " ");
-        }
-        System.out.println();
-        System.out.println("Number of recursive calls: " + p.step_counter);
+        p.displaySolution();
     }
 
     public static void main(String[] args) {
