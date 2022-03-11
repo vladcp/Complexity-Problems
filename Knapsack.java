@@ -5,6 +5,25 @@
  */
 import java.util.*;
 class Knapsack{
+    class Item{
+        int value;
+        int weight;
+        double relative_value;
+        public Item(int v, int w){
+            value = v;
+            weight = w;
+            relative_value = (double)v/w;
+        }
+        public int getValue() {
+            return value;
+        }
+        public int getWeight() {
+            return weight;
+        }
+        public double getRelative_value() {
+            return relative_value;
+        }
+    }
     //Maximum capacity
     int C;
     //values vector
@@ -59,13 +78,45 @@ class Knapsack{
         }
     }
     /**
+     * Slightly improved solution using only an upper bound to
+     * eliminate some branches of the search tree
+     * Note: first call Enum(-1,0,0,x)
+     * @param z current item, needs to be initialised with -1
+     * @param v_curr current total value at a given step
+     * @param w_curr current total weight at a given step
+     * @param x current solution vector
+     */
+    public void Enum_UB(int z, int v_curr, int w_curr, boolean[] x){
+        step_counter++;
+        if(w_curr <= C){
+            if(v_curr > v_max){
+                v_max = v_curr;
+                x_best = Arrays.copyOf(x, x.length);
+            }
+            if(z < n - 1){
+                z++;
+                double upper_bound = v_curr + (C - w_curr) * ((double)v[z]/w[z]);
+                if(upper_bound > v_max){
+                    x[z] = true;
+                    Enum_UB(z, v_curr + v[z], w_curr + w[z], x);
+                    x[z] = false;
+                    Enum_UB(z, v_curr, w_curr,x);
+                }
+            }
+        }
+    }
+    /**
      * Display current state of knapsack object
      */
     public void displaySolution(){
+        int total_weight = 0;
         System.out.println("The chosen items are: ");
         System.out.print("Weights: ");
         for(int i = 0; i < n; i++){
-            if(x_best[i]) System.out.print(w[i] + " ");
+            if(x_best[i]) {
+                System.out.print(w[i] + " ");
+                total_weight += w[i];
+            }
         }
         System.out.println();
         System.out.print("Values: ");
@@ -73,6 +124,8 @@ class Knapsack{
             if(x_best[i]) System.out.print(v[i] + " ");
         }
         System.out.println();
+        System.out.println("Total best value: " + v_max);
+        System.out.println("Total weight: " + total_weight + "/ " + C);
         System.out.println("Number of recursive calls: " + step_counter);
     }
     /**
@@ -86,11 +139,13 @@ class Knapsack{
         p.Enum(-1, 0, 0, p.x);
         p.displaySolution();
     }
-
+    public static void TestEnum_UB(int capacity, int[] values, int[] weights){
+        Knapsack p = new Knapsack(capacity, values, weights);
+    }
     public static void main(String[] args) {
         int[] val = {80,20,63};
         int[] weights = {32,16,21};
         int C = 50;
-        TestEnumSimple(C, val, weights);
+        // TestEnumSimple(C, val, weights);
     }
 }
