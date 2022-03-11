@@ -5,14 +5,30 @@
  */
 import java.util.*;
 class Knapsack{
-    class Item{
+    class Item implements Comparable<Item>{
+        int index;
         int value;
         int weight;
         double relative_value;
-        public Item(int v, int w){
+        public Item(int v, int w, int i){
+            index = i+1;
             value = v;
             weight = w;
             relative_value = (double)v/w;
+        }
+        public double getRelative_value() {
+            return relative_value;
+        }
+        public String toString(){
+            String string = "";
+            string += value + " " + weight + " " + relative_value + "\n";
+            return string;
+        }
+        @Override
+        public int compareTo(Item i) {
+            if(relative_value > i.relative_value) return -1;
+            else if(relative_value > i.relative_value) return 0;
+            return 1;
         }
     }
     //Maximum capacity
@@ -35,7 +51,7 @@ class Knapsack{
 
         items = new Item[n];
         for(int i = 0; i < n; i++){
-            items[i] = new Item(v[i],w[i]);
+            items[i] = new Item(v[i],w[i],i);
         }
         x_best = new boolean[n];
         x = new boolean[n];
@@ -105,7 +121,7 @@ class Knapsack{
         System.out.println("The chosen items are: ");
         for(int i = 0; i < n; i++){
             if(x_best[i]) {
-                System.out.print(i+1 + " ");
+                System.out.print(items[i].index + " ");
             }
         }
         System.out.println();
@@ -137,13 +153,24 @@ class Knapsack{
         p.Enum(-1, 0, 0, p.x);
         p.displaySolution();
     }
+    /**
+     * Test method for the enumeration method with upper bound
+     * @param capacity
+     * @param values
+     * @param weights
+     */
     public static void TestEnum_UB(int capacity, int[] values, int[] weights){
         Knapsack p = new Knapsack(capacity, values, weights);
+        Arrays.sort(p.items);
+        p.Enum_UB(-1, 0, 0, p.x);
+        p.displaySolution();
+        //sort items based on relative value
     }
     public static void main(String[] args) {
         int[] val = {80,20,63};
         int[] weights = {32,16,21};
         int C = 50;
-        TestEnumSimple(C, val, weights);
+        //TestEnumSimple(C, val, weights);
+        TestEnum_UB(C, val, weights);
     }
 }
