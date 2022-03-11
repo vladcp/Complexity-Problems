@@ -14,9 +14,9 @@ class Knapsack{
     //number of items
     int n;
     //current solution vector
-    int[] x;
+    boolean[] x;
     // best found solution vector
-    int[] x_best;
+    boolean[] x_best;
     //associated best total value
     int v_max = 0;
     int step_counter = 0;
@@ -26,10 +26,10 @@ class Knapsack{
         this.v = v;
         this.w = w;
         n = v.length;
-        x_best = new int[n];
-        x = new int[n];
-        Arrays.fill(x_best, 0);
-        Arrays.fill(x, 0);
+        x_best = new boolean[n];
+        x = new boolean[n];
+        Arrays.fill(x_best, false);
+        Arrays.fill(x, false);
     }
     // x is the current solution vector 
     //it stores 1 on indices of chosen items, 0 for rest
@@ -42,7 +42,7 @@ class Knapsack{
      * @param w_curr current total weight at a given step
      * @param x current solution vector
      */
-    public void Enum(int z, int v_curr, int w_curr, int[] x){
+    public void Enum(int z, int v_curr, int w_curr, boolean[] x){
         step_counter++;
         if(w_curr <= C){
             if(v_curr > v_max){
@@ -51,11 +51,22 @@ class Knapsack{
             }
             if(z < n - 1){
                 z++;
-                x[z] = 1;
+                x[z] = true;
                 Enum(z, v_curr + v[z], w_curr + w[z], x);
-                x[z] = 0;
+                x[z] = false;
                 Enum(z, v_curr, w_curr,x);
             }
+        }
+    }
+    /**
+     * Display current state of knapsack object
+     */
+    public void displaySolution(){
+        System.out.println("The items chosen are: ");
+        for(int i = 0; i < n; i++){
+            // if(x_best[i]){
+
+            // }
         }
     }
     /**
@@ -68,13 +79,12 @@ class Knapsack{
         Knapsack p = new Knapsack(capacity, values, weights);
         p.Enum(-1, 0, 0, p.x);
         System.out.print("The items chosen are: ");
-        for (int i : p.x_best) {
+        for (boolean i : p.x_best) {
             System.out.print(i + " ");
         }
         System.out.println();
         System.out.println("Number of recursive calls: " + p.step_counter);
     }
-
 
     public static void main(String[] args) {
         int[] val = {80,20,63};
