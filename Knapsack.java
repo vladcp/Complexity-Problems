@@ -14,22 +14,11 @@ class Knapsack{
             weight = w;
             relative_value = (double)v/w;
         }
-        public int getValue() {
-            return value;
-        }
-        public int getWeight() {
-            return weight;
-        }
-        public double getRelative_value() {
-            return relative_value;
-        }
     }
     //Maximum capacity
     int C;
-    //values vector
-    int[] v;
-    //weights vector
-    int[] w;
+    //items vector
+    Item[] items;
     //number of items
     int n;
     //current solution vector
@@ -42,9 +31,12 @@ class Knapsack{
 
     public Knapsack(int C, int[] v, int[] w){
         this.C = C;
-        this.v = v;
-        this.w = w;
         n = v.length;
+
+        items = new Item[n];
+        for(int i = 0; i < n; i++){
+            items[i] = new Item(v[i],w[i]);
+        }
         x_best = new boolean[n];
         x = new boolean[n];
         Arrays.fill(x_best, false);
@@ -71,7 +63,7 @@ class Knapsack{
             if(z < n - 1){
                 z++;
                 x[z] = true;
-                Enum(z, v_curr + v[z], w_curr + w[z], x);
+                Enum(z, v_curr + items[z].value, w_curr + items[z].weight, x);
                 x[z] = false;
                 Enum(z, v_curr, w_curr,x);
             }
@@ -95,10 +87,10 @@ class Knapsack{
             }
             if(z < n - 1){
                 z++;
-                double upper_bound = v_curr + (C - w_curr) * ((double)v[z]/w[z]);
+                double upper_bound = v_curr + (C - w_curr) * ((double)items[z].value/items[z].weight);
                 if(upper_bound > v_max){
                     x[z] = true;
-                    Enum_UB(z, v_curr + v[z], w_curr + w[z], x);
+                    Enum_UB(z, v_curr + items[z].value, w_curr + items[z].weight, x);
                     x[z] = false;
                     Enum_UB(z, v_curr, w_curr,x);
                 }
@@ -111,17 +103,23 @@ class Knapsack{
     public void displaySolution(){
         int total_weight = 0;
         System.out.println("The chosen items are: ");
+        for(int i = 0; i < n; i++){
+            if(x_best[i]) {
+                System.out.print(i+1 + " ");
+            }
+        }
+        System.out.println();
         System.out.print("Weights: ");
         for(int i = 0; i < n; i++){
             if(x_best[i]) {
-                System.out.print(w[i] + " ");
-                total_weight += w[i];
+                System.out.print(items[i].weight + " ");
+                total_weight += items[i].weight;
             }
         }
         System.out.println();
         System.out.print("Values: ");
         for(int i = 0; i < n; i++){
-            if(x_best[i]) System.out.print(v[i] + " ");
+            if(x_best[i]) System.out.print(items[i].value + " ");
         }
         System.out.println();
         System.out.println("Total best value: " + v_max);
@@ -146,6 +144,6 @@ class Knapsack{
         int[] val = {80,20,63};
         int[] weights = {32,16,21};
         int C = 50;
-        // TestEnumSimple(C, val, weights);
+        TestEnumSimple(C, val, weights);
     }
 }
