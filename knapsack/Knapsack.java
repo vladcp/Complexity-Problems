@@ -1,11 +1,12 @@
+package knapsack;
 /**
  * Class that tests different solutons to the Knapsack problem
  * Created by: Vlad-Cristian Prisacariu 
  * Date modified: 10-03-2022
  */
 import java.util.*;
-class Knapsack{
-    class Item implements Comparable<Item>{
+public class Knapsack{
+    public class Item implements Comparable<Item>{
         int index;
         int value;
         int weight;
@@ -116,7 +117,13 @@ class Knapsack{
     /**
      * Display current state of knapsack object
      */
-    public void displaySolution(){
+    
+    public void BranchAndBoundMax(){
+        int L = Integer.MIN_VALUE;
+
+    }
+
+     public void displaySolution(){
         int total_weight = 0;
         System.out.println("The chosen items are: ");
         for(int i = 0; i < n; i++){
