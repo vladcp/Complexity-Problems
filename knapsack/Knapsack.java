@@ -67,11 +67,6 @@ public class Knapsack{
         Arrays.fill(x_best, false);
         Arrays.fill(x, false);
     }
-    // x is the current solution vector 
-    //it stores 1 on indices of chosen items, 0 for rest
-    public Knapsack(Item[] items, int C){
-        LB = 
-    }
     /**
      * Inefficient EXP solution for the knapsack problem
      * Note: first call Enum(-1,0,0,x)
@@ -154,6 +149,7 @@ public class Knapsack{
             if(mustInclude_items[i].weight < capCopy){
                 lowerBound += mustInclude_items[i].value;
                 capCopy -= mustInclude_items[i].weight;
+                x_best[mustInclude_items[i].index] = true;
             }
             else return -1;
         }
@@ -161,6 +157,7 @@ public class Knapsack{
             if(items[i].weight < capCopy){
                 lowerBound += items[i].value;
                 capCopy -= items[i].weight;
+                x_best[mustInclude_items[i].index] = true;
             }
         }
         return lowerBound;
@@ -175,13 +172,19 @@ public class Knapsack{
         instances.add(k);
         while(instances.size() > 0){
             Knapsack curInstance = instances.get(0);
+            instances.remove(0);
             double l_upperBound = curInstance.upperBound();
             if(l_upperBound > L){
-                int l_lowerBound;
+                int l_lowerBound = curInstance.lowerBound();
+                if(l_lowerBound == -1) continue;
+                if(l_lowerBound > L) L = l_lowerBound;
+                if(l_upperBound > L){
+                    //partition in subinstances 
+                    //add them to arraylist
+                }
             }
-
         }
-
+    //return best sol with highest value L
     }
 
      public void displaySolution(){
