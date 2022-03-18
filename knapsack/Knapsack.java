@@ -11,11 +11,13 @@ public class Knapsack{
         int value;
         int weight;
         double relative_value;
+        boolean must_include;
         public Item(int v, int w, int i){
             index = i+1;
             value = v;
             weight = w;
             relative_value = (double)v/w;
+            must_include = false;
         }
         public double getRelative_value() {
             return relative_value;
@@ -36,6 +38,9 @@ public class Knapsack{
     int C;
     //items vector
     Item[] items;
+
+    //must include items
+    Item[] mustInclude_items;
     //number of items
     int n;
     //current solution vector
@@ -45,6 +50,9 @@ public class Knapsack{
     //associated best total value
     int v_max = 0;
     int step_counter = 0;
+
+    int LB;
+    int UB;
 
     public Knapsack(int C, int[] v, int[] w){
         this.C = C;
@@ -61,7 +69,9 @@ public class Knapsack{
     }
     // x is the current solution vector 
     //it stores 1 on indices of chosen items, 0 for rest
-
+    public Knapsack(Item[] items, int C){
+        LB = 
+    }
     /**
      * Inefficient EXP solution for the knapsack problem
      * Note: first call Enum(-1,0,0,x)
@@ -114,12 +124,63 @@ public class Knapsack{
             }
         }
     }
+    public double upperBound(){
+        double upperBound = 0;
+        int capCopy = C;
+        int i = 0;
+        while(i < mustInclude_items.length && mustInclude_items[i].weight < capCopy){
+            upperBound += mustInclude_items[i].value;
+            capCopy -= mustInclude_items[i].weight;
+            i++;
+        }
+        if(i != mustInclude_items.length){
+            upperBound += mustInclude_items[i].value * (double)capCopy/mustInclude_items[i].weight;
+        }
+        i = 0;
+        while(i < items.length && items[i].weight < capCopy){
+            upperBound += items[i].value;
+            capCopy -= items[i].weight;
+            i++;
+        }
+        if(i != items.length){
+            upperBound += items[i].value * (double)capCopy/items[i].weight;
+        }
+        return upperBound;
+    }
+    public int lowerBound(){
+        int lowerBound = 0;
+        int capCopy = C;
+        for(int i = 0; i < mustInclude_items.length; i++){
+            if(mustInclude_items[i].weight < capCopy){
+                lowerBound += mustInclude_items[i].value;
+                capCopy -= mustInclude_items[i].weight;
+            }
+            else return -1;
+        }
+        for(int i = 0; i < items.length; i++){
+            if(items[i].weight < capCopy){
+                lowerBound += items[i].value;
+                capCopy -= items[i].weight;
+            }
+        }
+        return lowerBound;
+    }
     /**
      * Display current state of knapsack object
      */
     
-    public void BranchAndBoundMax(){
+    public static void BranchAndBoundMax(Knapsack k){
         int L = Integer.MIN_VALUE;
+        ArrayList<Knapsack> instances = new ArrayList<>();
+        instances.add(k);
+        while(instances.size() > 0){
+            Knapsack curInstance = instances.get(0);
+            double l_upperBound = curInstance.upperBound();
+            if(l_upperBound > L){
+                int l_lowerBound;
+            }
+
+        }
 
     }
 
@@ -167,6 +228,13 @@ public class Knapsack{
      * @param weights
      */
     public static void TestEnum_UB(int capacity, int[] values, int[] weights){
+        Knapsack p = new Knapsack(capacity, values, weights);
+        Arrays.sort(p.items);
+        p.Enum_UB(-1, 0, 0, p.x);
+        p.displaySolution();
+        //sort items based on relative value
+    }
+    public static void TestBranchAndBoundMax(int capacity, int[] values, int[] weights){
         Knapsack p = new Knapsack(capacity, values, weights);
         Arrays.sort(p.items);
         p.Enum_UB(-1, 0, 0, p.x);
