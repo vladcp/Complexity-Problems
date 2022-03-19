@@ -1,4 +1,9 @@
 package knapsack;
+
+import java.io.File;  // Import the File class
+import java.io.FileNotFoundException;  // Import this class to handle errors
+import java.util.Scanner; // Import the Scanner class to read text files
+
 /**
  * Class that tests different solutons to the Knapsack problem
  * Created by: Vlad-Cristian Prisacariu 
@@ -62,6 +67,17 @@ public class Knapsack{
         for(int i = 0; i < n; i++){
             items[i] = new Item(v[i],w[i],i);
         }
+        x_best = new boolean[n];
+        x = new boolean[n];
+        Arrays.fill(x_best, false);
+        Arrays.fill(x, false);
+    }
+
+    public Knapsack(int C, Item[] i, Item[] must){
+        this.C = C;
+        n = i.length;
+        items = i;
+        mustInclude_items = must;
         x_best = new boolean[n];
         x = new boolean[n];
         Arrays.fill(x_best, false);
@@ -180,6 +196,7 @@ public class Knapsack{
                 if(l_lowerBound > L) L = l_lowerBound;
                 if(l_upperBound > L){
                     //partition in subinstances 
+                    // Knapsack i1 = new Knapsack(k.C,)
                     //add them to arraylist
                 }
             }
@@ -213,42 +230,19 @@ public class Knapsack{
         System.out.println("Total weight: " + total_weight + "/ " + C);
         System.out.println("Number of recursive calls: " + step_counter);
     }
-    /**
-     * Test method for the unimproved enumeration method
-     * @param capacity
-     * @param values
-     * @param weights
-     */
-    public static void TestEnumSimple(int capacity, int[] values, int[] weights){
-        Knapsack p = new Knapsack(capacity, values, weights);
-        p.Enum(-1, 0, 0, p.x);
-        p.displaySolution();
-    }
-    /**
-     * Test method for the enumeration method with upper bound
-     * @param capacity
-     * @param values
-     * @param weights
-     */
-    public static void TestEnum_UB(int capacity, int[] values, int[] weights){
-        Knapsack p = new Knapsack(capacity, values, weights);
-        Arrays.sort(p.items);
-        p.Enum_UB(-1, 0, 0, p.x);
-        p.displaySolution();
-        //sort items based on relative value
-    }
-    public static void TestBranchAndBoundMax(int capacity, int[] values, int[] weights){
-        Knapsack p = new Knapsack(capacity, values, weights);
-        Arrays.sort(p.items);
-        p.Enum_UB(-1, 0, 0, p.x);
-        p.displaySolution();
-        //sort items based on relative value
-    }
     public static void main(String[] args) {
-        int[] val = {80,20,63};
-        int[] weights = {32,16,21};
-        int C = 50;
-        //TestEnumSimple(C, val, weights);
-        TestEnum_UB(C, val, weights);
+        try {
+            File file = new File("text.txt");
+            Scanner scanner = new Scanner(file);
+            while (scanner.hasNextLine()) {
+                String data = scanner.nextLine();
+                System.out.println(data);
+              }
+              scanner.close();
+        } catch (FileNotFoundException e) {
+            System.out.println("File not found");
+            e.printStackTrace();
+            //TODO: handle exception
+        }
     }
 }
