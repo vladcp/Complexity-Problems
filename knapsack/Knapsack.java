@@ -204,7 +204,7 @@ public class Knapsack{
     //return best sol with highest value L
     }
 
-     public void displaySolution(){
+    public void displaySolution(){
         int total_weight = 0;
         System.out.println("The chosen items are: ");
         for(int i = 0; i < n; i++){
@@ -230,19 +230,46 @@ public class Knapsack{
         System.out.println("Total weight: " + total_weight + "/ " + C);
         System.out.println("Number of recursive calls: " + step_counter);
     }
-    public static void main(String[] args) {
+    
+    public static void readData() {
+        //file format:
+        // size, capacity
+        // w1, v1
+        // w2, v2
+        // etc
+        int n, capacity;
+        int[] values,weights;
         try {
             File file = new File("text.txt");
             Scanner scanner = new Scanner(file);
+
+            //first number is size
+            String[] r = scanner.nextLine().split("[,]", 0);
+            n = Integer.parseInt(r[0].replaceAll(" ", ""));
+            capacity = Integer.parseInt(r[1].replaceAll(" ", ""));
+
+            weights = new int[n];
+            values = new int[n];
+            int i = 0;
             while (scanner.hasNextLine()) {
-                String data = scanner.nextLine();
-                System.out.println(data);
+                String[] res = scanner.nextLine().split("[,]",0);
+                weights[i] = Integer.parseInt(res[0].replaceAll(" ", ""));
+                values[i] = Integer.parseInt(res[1].replaceAll(" ", ""));
+                System.out.println(weights[i] +" "+ values[i]);
+                i++;
               }
               scanner.close();
+              TestKnapsack.TestEnum_UB(capacity, values, weights);
         } catch (FileNotFoundException e) {
             System.out.println("File not found");
             e.printStackTrace();
-            //TODO: handle exception
+        } catch (Exception e){
+            System.out.println("Error occured!");
+            e.printStackTrace();
         }
+    }
+    public static void main(String[] args) {
+        System.out.println("Beginning");
+        readData();
     }
 }

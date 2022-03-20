@@ -39,24 +39,7 @@ public class TestKnapsack {
         p.displaySolution();
         //sort items based on relative value
     }
-    public static void main(String[] args) throws Exception {
-        try {
-            File file = new File("file.txt");
-            Scanner scanner = new Scanner(file);
-            while (scanner.hasNextLine()) {
-                String data = scanner.nextLine();
-                System.out.println(data);
-              }
-              scanner.close();
-        } catch (FileNotFoundException e) {
-            System.out.println("File not found");
-            e.printStackTrace();
-            //TODO: handle exception
-        }
-        int[] val = {92,57,49,68,60,43,67,84,87,72};
-        int[] weights = {23,31,29,44,53,38,63,85,89,82};
-        int C = 165;
-        //TestEnumSimple(C, val, weights);
-        TestEnum_UB(C, val, weights);
+    public static void main(String[] args) {
+        
     }
 }
