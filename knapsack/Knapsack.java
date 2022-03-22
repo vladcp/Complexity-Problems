@@ -59,11 +59,25 @@ public class Knapsack{
     int LB;
     int UB;
     public void displayItems(){
-        System.out.println("Printing items...");
-        for (Item item : items) {
-            System.out.println(item);
+        System.out.println("Printing all items...");
+
+        if (mustInclude_items != null) {
+            System.out.println("Printing must items...");
+            for (Item item : mustInclude_items) {
+                System.out.println(item);
+            }
+            System.out.println("Finished printing must items.");
         }
-        System.out.println("Finished printing items.");
+
+        if (items != null) {
+            System.out.println("Printing items...");
+            for (Item item : items) {
+                System.out.println(item);
+            }
+            System.out.println("Finished printing items.");
+        }
+
+        System.out.println("=================");
     }
     public Knapsack(int C, int[] v, int[] w){
         this.C = C;
@@ -81,7 +95,7 @@ public class Knapsack{
 
     public Knapsack(int C, Item[] i, Item[] must){
         this.C = C;
-        n = i.length;
+        n = i.length + must.length;
         items = i;
         mustInclude_items = must;
         x_best = new boolean[n];
@@ -217,6 +231,7 @@ public class Knapsack{
                     Item[] must = new Item[mustSize ++];
                     must[0] = k.items[0];
                     Item[] rest = new Item[k.n - 1];
+                    rest = Arrays.copyOfRange(k.items, 1, k.items.length);
                     Knapsack i1 = new Knapsack(k.C, rest, must);
                     //add them to arraylist
                     instances.add(i1);
