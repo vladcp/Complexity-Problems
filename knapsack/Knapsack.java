@@ -58,7 +58,13 @@ public class Knapsack{
 
     int LB;
     int UB;
-
+    public void displayItems(){
+        System.out.println("Printing items...");
+        for (Item item : items) {
+            System.out.println(item);
+        }
+        System.out.println("Finished printing items.");
+    }
     public Knapsack(int C, int[] v, int[] w){
         this.C = C;
         n = v.length;
@@ -139,41 +145,51 @@ public class Knapsack{
         double upperBound = 0;
         int capCopy = C;
         int i = 0;
-        while(i < mustInclude_items.length && mustInclude_items[i].weight < capCopy){
-            upperBound += mustInclude_items[i].value;
-            capCopy -= mustInclude_items[i].weight;
-            i++;
-        }
-        if(i != mustInclude_items.length){
-            upperBound += mustInclude_items[i].value * (double)capCopy/mustInclude_items[i].weight;
+        if(mustInclude_items != null){
+            while(i < mustInclude_items.length && mustInclude_items[i].weight < capCopy){
+                upperBound += mustInclude_items[i].value;
+                capCopy -= mustInclude_items[i].weight;
+                i++;
+            }
+            if(i != mustInclude_items.length){
+                upperBound += mustInclude_items[i].value * (double)capCopy/mustInclude_items[i].weight;
+            }
         }
         i = 0;
-        while(i < items.length && items[i].weight < capCopy){
-            upperBound += items[i].value;
-            capCopy -= items[i].weight;
-            i++;
-        }
-        if(i != items.length){
-            upperBound += items[i].value * (double)capCopy/items[i].weight;
+        if(items != null){
+            // displayItems();
+            while(i < items.length && items[i].weight < capCopy){
+                upperBound += items[i].value;
+                capCopy -= items[i].weight;
+                i++;
+            }
+            if(i != items.length){
+                upperBound += items[i].value * (double)capCopy/items[i].weight;
+            }
         }
         return upperBound;
     }
     public int lowerBound(){
         int lowerBound = 0;
         int capCopy = C;
-        for(int i = 0; i < mustInclude_items.length; i++){
-            if(mustInclude_items[i].weight < capCopy){
-                lowerBound += mustInclude_items[i].value;
-                capCopy -= mustInclude_items[i].weight;
-                x_best[mustInclude_items[i].index] = true;
+        if(mustInclude_items != null){
+            for(int i = 0; i < mustInclude_items.length; i++){
+                if(mustInclude_items[i].weight < capCopy){
+                    lowerBound += mustInclude_items[i].value;
+                    capCopy -= mustInclude_items[i].weight;
+                    x_best[mustInclude_items[i].index] = true;
+                }
+                else return -1;
             }
-            else return -1;
         }
-        for(int i = 0; i < items.length; i++){
-            if(items[i].weight < capCopy){
-                lowerBound += items[i].value;
-                capCopy -= items[i].weight;
-                x_best[mustInclude_items[i].index] = true;
+        if(items != null){
+            // displayItems();
+            for(int i = 0; i < items.length; i++){
+                if(items[i].weight < capCopy){
+                    lowerBound += items[i].value;
+                    capCopy -= items[i].weight;
+                    x_best[items[i].index] = true;
+                }
             }
         }
         return lowerBound;
@@ -181,13 +197,15 @@ public class Knapsack{
     /**
      * Display current state of knapsack object
      */
-    
     public static void BranchAndBoundMax(Knapsack k){
+        int mustSize = 1;
         int L = Integer.MIN_VALUE;
         ArrayList<Knapsack> instances = new ArrayList<>();
         instances.add(k);
         while(instances.size() > 0){
             Knapsack curInstance = instances.get(0);
+            //remove instance
+            curInstance.displayItems();
             instances.remove(0);
             double l_upperBound = curInstance.upperBound();
             if(l_upperBound > L){
@@ -196,11 +214,21 @@ public class Knapsack{
                 if(l_lowerBound > L) L = l_lowerBound;
                 if(l_upperBound > L){
                     //partition in subinstances 
-                    // Knapsack i1 = new Knapsack(k.C,)
+                    Item[] must = new Item[mustSize ++];
+                    must[0] = k.items[0];
+                    Item[] rest = new Item[k.n - 1];
+                    Knapsack i1 = new Knapsack(k.C, rest, must);
                     //add them to arraylist
+                    instances.add(i1);
+
+                    rest = new Item[k.n-1];
+                    rest = Arrays.copyOfRange(k.items, 1, k.items.length);
+                    Knapsack i2 = new Knapsack(k.C, rest, k.mustInclude_items);
+                    instances.add(i2);
                 }
             }
         }
+
     //return best sol with highest value L
     }
 
@@ -231,7 +259,7 @@ public class Knapsack{
         System.out.println("Number of recursive calls: " + step_counter);
     }
     
-    public static void readData() {
+    public static Knapsack readData() {
         //file format:
         // size, capacity
         // w1, v1
@@ -240,7 +268,7 @@ public class Knapsack{
         int n, capacity;
         int[] values,weights;
         try {
-            File file = new File("text.txt");
+            File file = new File("example.txt");
             Scanner scanner = new Scanner(file);
 
             //first number is size
@@ -259,7 +287,8 @@ public class Knapsack{
                 i++;
               }
               scanner.close();
-              TestKnapsack.TestEnum_UB(capacity, values, weights);
+              return new Knapsack(capacity, values, weights);
+            //   TestKnapsack.TestEnum_UB(capacity, values, weights);
         } catch (FileNotFoundException e) {
             System.out.println("File not found");
             e.printStackTrace();
@@ -267,9 +296,16 @@ public class Knapsack{
             System.out.println("Error occured!");
             e.printStackTrace();
         }
+        return null;
+    }
+
+    public static void TestBranchAndBoundMax(){
+        Knapsack k = readData();
+        Arrays.sort(k.items);
+        BranchAndBoundMax(k);
     }
     public static void main(String[] args) {
         System.out.println("Beginning");
-        readData();
+        TestBranchAndBoundMax();
     }
 }
